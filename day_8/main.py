@@ -90,12 +90,40 @@ for i in range(1, len(distances[:conn_limit])):
 #circuits.sort(key=lambda c:-len(c))
 vprint("Cicuitry done.")
 vprint([[int(i) for i in c] for c in circuits])
-vprint("---")
 
 biggest_circuits = list(set(sorted([len(c) for c in circuits])))
 product_biggest_circuits = biggest_circuits[-1] * biggest_circuits[-2] * biggest_circuits[-3]
 vprint(biggest_circuits)
 
+# 2nd star
+vprint("####### 2nd star #######")
+circuits = [set([indices[0], orig_indices[0]])]
+vprint(circuits)
+last_indices = []
+for i in range(1, len(distances)):
+    # Hier alle Circuits einfügen (for loop hierunter mit range und index machen), in den die conn drin ist 
+    # und weiter unten dann alle zusammenfügen, aka mergen und überschüssige löschen 
+    # (oder bei 1 nur zahlen hinzufügen, oderoder bei 0 komplette conn hinzufügen)
+    part_of_conn_in_any_circuit = []
+    for c in range(len(circuits)):
+        if orig_indices[i] in circuits[c] or indices[i] in circuits[c]:
+            part_of_conn_in_any_circuit.append(c)
+    #vprint(conn[1:], len(part_of_conn_in_any_circuit))
+    if len(part_of_conn_in_any_circuit) == 0:
+        circuits.append(set([indices[i], orig_indices[i]]))
+    if len(part_of_conn_in_any_circuit) > 0:
+        circuits[part_of_conn_in_any_circuit[0]].add(indices[i])
+        circuits[part_of_conn_in_any_circuit[0]].add(orig_indices[i])
+        if len(part_of_conn_in_any_circuit) == 2:
+            for p in circuits[part_of_conn_in_any_circuit[1]]:
+                circuits[part_of_conn_in_any_circuit[0]].add(p)
+            circuits.remove(circuits[part_of_conn_in_any_circuit[1]])
+
+    if len(circuits) == 1 and len(circuits[0]) > len(numbers)-1:
+        vprint(circuits)
+        last_indices = [orig_indices[i], indices[i]]
+        break
+
 print(f"input {filename}:")
 print(f"1. star: {np.prod(product_biggest_circuits)}")
-print(f"2. star: {0}")
+print(f"2. star: {np.prod([numbers[last_indices[0]][0], numbers[last_indices[1]][0]])}")
