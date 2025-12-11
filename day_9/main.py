@@ -24,10 +24,32 @@ for i in range(len(points)):
 
 #vprint(len(rectangles))
 
-rectangles = sorted(rectangles, key=lambda r:r[2])
+rectangles = sorted(rectangles, key=lambda r:r[2], reverse=True)
 
 #vprint(rectangles, rectangles[-1][2])
-biggest_area = rectangles[-1][2]
+biggest_area = rectangles[0][2]
+
+# 2nd star
+i = 0
+for _ in range(len(rectangles)):
+    # Original vertices of the rectangle
+    bounds_x = sorted([rectangles[i][0][0], rectangles[i][1][0]])
+    bounds_y = sorted([rectangles[i][0][1], rectangles[i][1][1]])
+    #v1, v2 = [x-1 for x in rectangles[i][0]], [x-1 for x in rectangles[i][1]]
+    # Diagonal vertices
+    #v3, v4 = [rectangles[i][0][0]-1, rectangles[i][1][1]-1], [rectangles[i][1][0]-1, rectangles[i][0][1]-1]
+    mark_for_removal = False
+    for r in range(len(points)):
+        if (points[r][0] > bounds_x[0] and points[r][0] <bounds_x[1]) and (points[r][1] > bounds_y[0] and points[r][1] <bounds_y[1]):
+            mark_for_removal = True
+            break
+    if mark_for_removal:
+        rectangles = rectangles[:i]+rectangles[i+1:]
+        i -= 1
+    i += 1
+    
+vprint(rectangles[0])
+    
 
 print(f"input {filename}:")
 print(f"1. star: {biggest_area}")
